@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
+
+	"github.com/tidwall/gjson"
 )
 
 var (
@@ -60,7 +60,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +116,7 @@ func uploadFile(url string, params map[string]string, filename string, file io.R
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 func IsExists(path string) (os.FileInfo, bool) {
