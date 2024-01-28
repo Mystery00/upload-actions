@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/tidwall/gjson"
 )
@@ -21,6 +22,10 @@ var (
 )
 
 func main() {
+	str, _ := os.Getwd()
+	fmt.Printf("pwd: %s\n", str)
+	files, _ := filepath.Glob("*")
+	fmt.Println(files)
 	if signUrl == "" {
 		panic("signUrl is empty")
 	}

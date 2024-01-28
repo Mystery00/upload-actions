@@ -1,8 +1,8 @@
 module upload-actions
 
-go 1.20
+go 1.21
 
-require github.com/tidwall/gjson v1.14.4
+require github.com/tidwall/gjson v1.17.0
 
 require (
 	github.com/tidwall/match v1.1.1 // indirect
