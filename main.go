@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -13,12 +12,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+const uploadUrl = "http://file-manage.server.svc.cluster.local:8080/api/rest/file-manage/internal/proxy/upload/v1"
+
 var (
-	signUrl  = os.Args[1]
-	mimeType = os.Args[2]
-	st       = os.Args[3]
-	filePath = os.Args[4]
-	title    = os.Args[5]
+	st       = os.Args[1]
+	filePath = os.Args[2]
 )
 
 func main() {
@@ -26,12 +24,6 @@ func main() {
 	fmt.Printf("pwd: %s\n", str)
 	files, _ := filepath.Glob("*")
 	fmt.Println(files)
-	if signUrl == "" {
-		panic("signUrl is empty")
-	}
-	if mimeType == "" {
-		panic("mimeType is empty")
-	}
 	if st == "" {
 		panic("st is empty")
 	}
@@ -42,37 +34,6 @@ func main() {
 	if !ok {
 		panic("file not exists")
 	}
-	signBody := make(map[string]interface{})
-	signBody["serviceName"] = ""
-	signBody["storeType"] = st
-	signBody["fileSize"] = fileInfo.Size()
-	signBody["mimeType"] = mimeType
-	if title != "" {
-		signBody["title"] = title
-	}
-
-	client := &http.Client{}
-	signData, err := json.Marshal(signBody)
-	if err != nil {
-		panic(err)
-	}
-	req, err := http.NewRequest("POST", signUrl, bytes.NewReader(signData))
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	uploadUrl := gjson.Get(string(body), "uploadUrl").String()
-	key := gjson.Get(string(body), "uploadMeta.key").String()
-	token := gjson.Get(string(body), "uploadMeta.signature").String()
 
 	srcFile, err := os.Open(filePath)
 	if err != nil {
@@ -80,8 +41,9 @@ func main() {
 	}
 
 	params := map[string]string{
-		"key":   key,
-		"token": token,
+		"fileName":    fileInfo.Name(),
+		"serviceName": "xhu-timetable",
+		"storeType":   st,
 	}
 
 	responseBody, err := uploadFile(uploadUrl, params, fileInfo.Name(), srcFile)
