@@ -2,12 +2,21 @@
 name: 'upload-actions'
 description: 'upload actions'
 inputs:
+  signUrl:
+    description: 'sign url'
+    required: true
+  mimeType:
+    description: 'mimeType'
+    required: true
   st:
     description: 'st'
     required: true
   filePath:
     description: 'file path'
     required: true
+  title:
+    description: 'file title'
+    required: false
 outputs:
   resId:
     description: 'resId'
@@ -15,5 +24,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.signUrl }}
+    - ${{ inputs.mimeType }}
     - ${{ inputs.st }}
     - ${{ inputs.filePath }}
+    - ${{ inputs.title }}
