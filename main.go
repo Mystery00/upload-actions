@@ -54,19 +54,23 @@ func main() {
 	client := &http.Client{}
 	signData, err := json.Marshal(signBody)
 	if err != nil {
+		fmt.Printf("json marshal error: %s", err.Error())
 		panic(err)
 	}
 	req, err := http.NewRequest("POST", signUrl, bytes.NewReader(signData))
 	if err != nil {
+		fmt.Printf("http.NewRequest error: %s", err.Error())
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Printf("client.Do error: %s", err.Error())
 		panic(err)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Printf("io.ReadAll error: %s", err.Error())
 		panic(err)
 	}
 
@@ -76,6 +80,7 @@ func main() {
 
 	srcFile, err := os.Open(filePath)
 	if err != nil {
+		fmt.Printf("os.Open error: %s", err.Error())
 		panic(err)
 	}
 
@@ -86,11 +91,12 @@ func main() {
 
 	responseBody, err := uploadFile(uploadUrl, params, fileInfo.Name(), srcFile)
 	if err != nil {
+		fmt.Printf("uploadFile error: %s", err.Error())
 		panic(err)
 	}
 
 	resId := gjson.Get(string(responseBody), "resourceId").String()
-	fmt.Printf(`::set-output name=resId::%s`, resId)
+	fmt.Printf(`echo "resId=%s" >> $GITHUB_OUTPUT`, resId)
 }
 
 func uploadFile(url string, params map[string]string, filename string, file io.Reader) ([]byte, error) {
