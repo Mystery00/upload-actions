@@ -96,7 +96,8 @@ func main() {
 	}
 
 	resId := gjson.Get(string(responseBody), "resourceId").String()
-	fmt.Printf(`echo "resId=%s" >> $GITHUB_OUTPUT`, resId)
+	//fmt.Printf(`echo "resId=%s" >> $GITHUB_OUTPUT`, resId)
+	fmt.Printf(`::set-output name=resId::%s`, resId)
 }
 
 func uploadFile(url string, params map[string]string, filename string, file io.Reader) ([]byte, error) {
