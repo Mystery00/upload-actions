@@ -5,5 +5,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY=https://goproxy
 
 ###
 FROM mirror.ccs.tencentyun.com/library/alpine as final
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencentyun.com/g' /etc/apk/repositories
+RUN apk --no-cache add ca-certificates
 ENTRYPOINT ["/usr/bin/upload-actions"]
 COPY --from=builder /usr/bin/upload-actions /usr/bin/
